@@ -1,5 +1,5 @@
 :: StoryTitle
-大学生活模拟器
+本地
 
 
 :: StoryData
@@ -17,7 +17,73 @@
 
 
 :: StoryInit {"position":"550,125","size":"100,100"}
+/玩家基础信息/
+<<set $playername="Name">>
 
+/玩家属性初始化/（才艺、学识、体能、交际、心情，存款）
+<<set $ACC=0>>/accomplishment|才艺/
+<<set $KNO=0>>/knowledge|学识/
+<<set $STA=0>>/stamina|体能/
+<<set $COM=0>>/communication|交际/
+<<set $MOO=0>>/mood|心情/
+<<set $MON=1000>>/money|存款/
+
+/背包和商店初始化/
+<<set $backpack = [
+    {name: "测试商品1", hold: 0},
+    {name: "测试商品2", hold: 0},
+]>>
+
+<<set $shop = [
+    {name: "测试商品1", hold: 1, price: 10},
+    {name: "测试商品2", hold: 1, price: 100}
+]>>
+
+<<set $shop = $shop || []>>
+<<set $backpack = $backpack || []>>
+
+
+:: shop {"position":"900,100","size":"100,100"}
+您好，$playername,欢迎光临！
+【您的存款：$MON】
+<<if !$shop || $shop.length === 0>>
+  商店暂无商品上架
+<</if>>
+<<nobr>>
+<<for _i to 0; _i lt $shop.length; _i++>>
+    <<capture _i>>
+        <<set _item = $shop[_i]>>
+         <<if _item.hold <= 0>>
+            【售罄】_item.name
+         <<else>>
+            _item.name(库存：_item.hold) [价格：_item.price元]
+            <<link "购买">>
+                <<set _price = $shop[_i].price>>
+                <<if $MON < _price>>
+                    <<alert "存款不足！">>
+                <<else>>
+                    <<set $MON -= _price>>
+                    <<set $shop[_i].hold = Math.max(0, $shop[_i].hold - 1)>>
+                    <<set _found = false>>
+                    <<for _j to 0; _j lt $backpack.length; _j++>>
+                        <<capture _j>>
+                            <<if $backpack[_j].name === $shop[_i].name>>
+                                <<set $backpack[_j].hold += 1>>
+                                <<set _found = true>>
+                            <</if>>
+                        <</capture>>
+                    <</for>>
+                    <<if !_found>>
+                        <<set $backpack.push({name: $shop[_i].name,hold: 1})>>
+                    <</if>>
+                <</if>>
+                <<goto "shop">>
+            <</link>>
+         <</if>>
+         <br>
+    <</capture>>
+<</for>>
+<</nobr>>
 
 
 :: 初始 {"position":"550,225","size":"100,100"}
@@ -45,12 +111,48 @@
 2.基础UI（资源栏等）
 3.多条剧情线（）
 目前正处于早期开发阶段
-[[继续|开头]]
+[[【继续】|录取]]
 
 
-:: 开头 {"position":"650,225","size":"100,100"}
-1
+:: 开头1 {"position":"750,225","size":"100,100"}
+[[商店测试|shop]]
 
+
+:: 录取 {"position":"650,225","size":"100,100"}
+<h1>录取通知书</h1>
+<h1>ACCEPTNCE LETTER</h1>
+<<textbox "$playername" "请输入姓名">>同学：
+       我校决定录取你入XX学院学院（系）XX专业学习。
+请你准时于XXXX年九月五日凭本通知书到校报到。
+                              
+校长：XXX <center>招生办公室</center>
+<center>XXXX年X月XX日</center>
+<<timed 3s>>
+[[【继续】|开头1]]
+<</timed>>
+
+
+:: StoryScript [script]
+/* 对侧边栏按钮的汉化函数 */
+(function(){
+    function ChineseBtton(){
+        var $save = $('#menu-item-saves a');
+        if($save.length) {
+            $save.text('存档');
+        }
+        var $restart = $('#menu-item-restart a');
+        if($restart.length) {
+            $restart.text('重启'); 
+        }
+    }
+  
+    $(document).ready(function(){
+        setTimeout(ChineseBtton, 200);
+    });
+    $('#ui-bar-toggle').on('click', function(){
+        setTimeout(ChineseBtton, 200);
+    });
+})();
 
 :: StoryStylesheet [stylesheet]
 body {
@@ -65,4 +167,54 @@ a {
 
 a:hover {
   color: #0066cc;
+}
+
+/*侧边栏背景色修改*/
+#ui-bar,
+#ui-bar-tray,
+#ui-bar-body,
+#title,
+#menu {
+    background-color: #ffffff !important;
+}
+
+#ui-bar * {
+    background-color: transparent !important;
+}
+
+#ui-bar,
+#ui-bar * {
+    color: #000 !important;
+    fill: #000 !important;
+    stroke: #000 !important;
+}
+
+/*侧边栏文字和矢量图颜色修改*/
+#ui-bar button,
+#ui-bar a,
+#ui-bar li,
+#ui-bar h1,
+#menu-item-saves a,
+#menu-item-restart a {
+    color: #000 !important;
+}
+
+#ui-bar button svg,
+#ui-bar a svg {
+    fill: #000 !important;
+    stroke: #000 !important;
+}
+
+#ui-bar button svg * {
+    fill: #000 !important;
+    stroke: #000 !important;
+}
+
+#ui-bar button {
+
+#ui-bar button[disabled] svg,
+#ui-bar button[aria-disabled="true"] svg {
+    fill: #000 !important;
+    stroke: #000 !important;
+    opacity: 0.5 !important; 
 }
