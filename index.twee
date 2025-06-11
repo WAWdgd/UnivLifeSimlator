@@ -7,7 +7,7 @@
   "ifid": "18AD2003-7C9C-46F0-868F-9793ADE721E2",
   "format": "SugarCube",
   "format-version": "2.37.3",
-  "start": "初始",
+  "start": "录取",
   "tag-colors": {
     "style": "red",
     "stylesheet": "red"
@@ -119,13 +119,77 @@
 
 
 :: 录取 {"position":"650,225","size":"100,100"}
-<h1>录取通知书</h1>
-<h1>ACCEPTNCE LETTER</h1>
-<<textbox "$playername" "请输入姓名" autofocus>>同学：
-       我校决定录取你入XX学院学院（系）XX专业学习。
-请你准时于XXXX年九月五日凭本通知书到校报到。
-校长：XXX <center>招生办公室</center>
-<center>XXXX年X月XX日</center>
+/*样式列表*/
+<style>
+  .admission-container {
+    max-width: 700px;
+    min-width: 50px;
+    margin: 20px auto;
+        padding: 40px;
+    border: 6px double #8B0000;
+    background-color: #fffdf5;
+    font-family: 'Songti SC', 'SimSun', serif;
+    color: #333;
+    line-height: 1.8;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .admission-title-cn {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #8B0000;
+  }
+
+  .admission-title-en {
+    text-align: center;
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 1px;
+  }
+
+  .input-box {
+    color: black;
+    background-color: white;
+    border: 1px solid black;
+    font-size: 16px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+
+  .seal {
+    position: absolute;
+    bottom: 50px;
+    right: 30px;
+    width: 100px;
+    opacity: 0.8;
+  }
+
+  .footer {
+    line-height: normal;
+    text-align: right;
+    margin-top: 40px;
+  }
+</style>
+
+/*页面实现*/
+
+<div class="admission-container">
+  <div class="admission-title-cn">录取通知书</div>
+  <div class="admission-title-en">ACCEPTANCE LETTER</div>
+
+<<textbox "$playername" "请输入你的名字" class:"input-box">> 同学：
+
+  <p style="line-height: 150%">
+    我校决定录取你进入 XX 学院（系）XX 专业学习。<br>
+    请你准时于 XXXX 年九月五日凭本通知书到校报到。
+  </p>
+
+  <div class="footer">校长：XXX<br>
+  XXXX 年X月X日
+  </div>
+  
 <<button "【确认提交】">>>
     <<set _trimmed = $playername.trim()>>
     <<if _trimmed === "">>
@@ -139,6 +203,9 @@
 <<silently>>
     <<set $playername = $playername || "">>
 <</silently>>
+  
+  <img class="seal" src="https://www.hbucm.edu.cn/__local/F/A5/2C/FD1F1B7B07378A6802E8A1B4039_F279FAED_232CA.jpg" alt="印章">
+</div>
 
 
 :: StoryScript [script]
