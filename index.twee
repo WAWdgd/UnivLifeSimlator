@@ -121,15 +121,24 @@
 :: 录取 {"position":"650,225","size":"100,100"}
 <h1>录取通知书</h1>
 <h1>ACCEPTNCE LETTER</h1>
-<<textbox "$playername" "请输入姓名">>同学：
+<<textbox "$playername" "请输入姓名" autofocus>>同学：
        我校决定录取你入XX学院学院（系）XX专业学习。
 请你准时于XXXX年九月五日凭本通知书到校报到。
-                              
 校长：XXX <center>招生办公室</center>
 <center>XXXX年X月XX日</center>
-<<timed 3s>>
-[[【继续】|开头1]]
-<</timed>>
+<<button "【确认提交】">>>
+    <<set _trimmed = $playername.trim()>>
+    <<if _trimmed === "">>
+        <<script>>
+            alert("空白同学，您已被神圣泰拉录取，穿越特派员泥头车正在路上，请问您真的叫空白吗？");
+        <</script>>
+    <<else>>
+        <<goto "开头1">> 
+    <</if>>
+<</button>>
+<<silently>>
+    <<set $playername = $playername || "">>
+<</silently>>
 
 
 :: StoryScript [script]
