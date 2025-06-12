@@ -1,5 +1,5 @@
 :: StoryTitle
-本地
+大学生活暂定
 
 
 :: StoryData
@@ -7,31 +7,43 @@
   "ifid": "18AD2003-7C9C-46F0-868F-9793ADE721E2",
   "format": "SugarCube",
   "format-version": "2.37.3",
-  "start": "录取",
+  "start": "初始",
   "tag-colors": {
     "style": "red",
-    "stylesheet": "red"
+    "stylesheet": "red",
+    "widget": "orange",
+    "noreturn": "red"
   },
   "zoom": 1
 }
 
 
+:: StoryCaption {"position":"750,125","size":"100,100"}
+<img src="img/ditu.jpg" width="200px">
+你已入学$time个月
+动力:<meter min="0" low="40" high="90" max="100" @value="$power"></meter>$power
+
+
 :: StoryInit {"position":"550,125","size":"100,100"}
 /玩家基础信息/
 <<set $playername="Name">>
+<<set $power=100>>/动力/
 
-/玩家属性初始化/（才艺、学识、体能、交际、心情，存款）
-<<set $ACC=0>>/accomplishment|才艺/
-<<set $KNO=0>>/knowledge|学识/
+/时间初始化/
+<<set $time=1>>
+
+/玩家属性初始化/（才艺、学力、体能、交际、心情，存款）
+<<set $TAL=0>>/talent|才能/
+<<set $KNO=0>>/knowledge|学力/
 <<set $STA=0>>/stamina|体能/
 <<set $COM=0>>/communication|交际/
 <<set $MOO=0>>/mood|心情/
-<<set $MON=1000>>/money|存款/
+<<set $MON=1000>>/money|金钱/
 
 /背包和商店初始化/
 <<set $backpack = [
-    {name: "测试商品1", hold: 0},
-    {name: "测试商品2", hold: 0},
+    {name: "测试商品1", hold: 1, price: 10},
+    {name: "测试商品2", hold: 0, price: 100},
 ]>>
 
 <<set $shop = [
@@ -43,8 +55,14 @@
 <<set $backpack = $backpack || []>>
 
 
-:: shop {"position":"900,100","size":"100,100"}
+:: StoryMenu {"position":"750,25","size":"100,100"}
+[[手机]]
+[[背包]]
+
+
+:: shop {"position":"1050,125","size":"100,100"}
 您好，$playername,欢迎光临！
+[[回到马路|街道]]
 【您的存款：$MON】
 <<if !$shop || $shop.length === 0>>
   商店暂无商品上架
@@ -86,6 +104,41 @@
 <</nobr>>
 
 
+:: 主界面 {"position":"750,225","size":"100,100"}
+现在是第$time个月
+日程安排
+<table border="2">
+  <tr>
+    <th>
+    <img src="img\lihui.jpg" width="300px">
+    </th>
+    <th>
+      [[学习|主界面][]]
+      <hr>
+      [[社交|主界面][]]
+      <hr>
+      [[社团活动|主界面][]]
+    </th>
+    <th>
+      [[锻炼|主界面][]]
+      <hr>
+      [[打工|主界面][]]
+      <hr>
+      [[摆烂|主界面][]]
+    </th>
+    <th>
+      [[出门|街道][]]
+    </th>
+  </tr>
+</table>
+[[【结束这个月】|主界面][$time+=1]]
+
+
+:: 体育馆 {"position":"1050,325","size":"100,100"}
+这里是体育馆
+[[回到马路|街道]]
+
+
 :: 初始 {"position":"550,225","size":"100,100"}
 草率的策划案，帮助你了解本企划
 游戏名称：待定的大学生活（所以是待定）
@@ -114,8 +167,14 @@
 [[【继续】|录取]]
 
 
-:: 开头1 {"position":"750,225","size":"100,100"}
-[[商店测试|shop]]
+:: 图书馆 {"position":"1150,225","size":"100,100"}
+这里是图书馆
+[[回到马路|街道]]
+
+
+:: 宿舍 {"position":"950,125","size":"100,100"}
+这里是宿舍
+[[回到马路|街道]]
 
 
 :: 录取 {"position":"650,225","size":"100,100"}
@@ -166,6 +225,16 @@
     opacity: 0.8;
   }
 
+.macro-textbox {
+  background-color: white;
+  color: black;
+}
+
+.macro-textbox:hover {
+      background-color:#808080;
+      transition: 0.2s;
+  }
+
   .footer {
     line-height: normal;
     text-align: right;
@@ -179,7 +248,7 @@
   <div class="admission-title-cn">录取通知书</div>
   <div class="admission-title-en">ACCEPTANCE LETTER</div>
 
-<<textbox "$playername" "请输入你的名字" class:"input-box">> 同学：
+<<textbox "$playername" "" class:"input-box">> 同学：
 
   <p style="line-height: 150%">
     我校决定录取你进入 XX 学院（系）XX 专业学习。<br>
@@ -197,7 +266,7 @@
             alert("空白同学，您已被神圣泰拉录取，穿越特派员泥头车正在路上，请问您真的叫空白吗？");
         <</script>>
     <<else>>
-        <<goto "开头1">> 
+        <<goto "主界面">> 
     <</if>>
 <</button>>
 <<silently>>
@@ -206,6 +275,98 @@
   
   <img class="seal" src="https://www.hbucm.edu.cn/__local/F/A5/2C/FD1F1B7B07378A6802E8A1B4039_F279FAED_232CA.jpg" alt="印章">
 </div>
+
+
+:: 手机 [noreturn] {"position":"850,25","size":"100,100"}
+这里是手机可以康康属性
+[[返回|$return]]
+
+才能:<meter min="0" low="40" high="90" max="100" @value="$TAL"></meter>$TAL
+学力:<meter min="0" low="40" high="90" max="100" @value="$KNO"></meter>$KNO
+体能:<meter min="0" low="40" high="90" max="100" @value="$STA"></meter>$STA
+交际:<meter min="0" low="40" high="90" max="100" @value="$COM"></meter>$COM
+心情:<meter min="0" low="40" high="90" max="100" @value="$MOO"></meter>$MOO
+余额:$MON元
+
+
+:: 教学楼 {"position":"950,225","size":"100,100"}
+这里是教学楼
+[[回到马路|街道]]
+
+
+:: 活动中心 {"position":"950,325","size":"100,100"}
+这里是活动中心
+[[回到马路|街道]]
+
+
+:: 背包 [noreturn] {"position":"950,25","size":"100,100"}
+这里可以查看你的物品
+[[返回|$return]]
+
+<<nobr>>
+<<silently>>
+  <<set _hasItems = false>>
+  <<set _filteredItems = []>>
+  <<for _i = 0; _i < $backpack.length; _i++>>
+    <<if $backpack[_i].hold > 0>>
+      <<set _hasItems = true>>
+      <<set _filteredItems.push($backpack[_i])>>
+    <</if>>
+  <</for>>
+<</silently>>
+
+<<if !_hasItems>>
+  <div class="empty-msg">背包空空如也！</div>
+<<else>>
+  <div class="backpack-container">
+    <table class="backpack-table">
+      <thead>
+        <tr>
+          <th class="text-left">物品名称</th>
+          <th>持有数量</th>
+          <th>单价</th>
+          <th>总价值</th>
+        </tr>
+      </thead>
+      <tbody>
+        <<for _j = 0; _j < _filteredItems.length; _j++>>
+          <<set _item = _filteredItems[_j]>>
+          <tr>
+            <td class="text-left"><<= _item.name >></td>
+            <td class="num-align"><<= _item.hold >></td>
+            <td class="num-align"><<= _item.price >>元</td>
+            <td class="num-align"><<= _item.hold * _item.price >>元</td>
+          </tr>
+        <</for>>
+      </tbody>
+    </table>
+  </div>
+<</if>>
+<</nobr>>
+
+
+:: 药园 {"position":"1150,325","size":"100,100"}
+这里是药园
+[[回到马路|街道]]
+
+
+:: 街道 {"position":"1050,225","size":"100,100"}
+你来到了街道边
+你想要前往？
+[[【还是回去吧】|主界面]]
+[[【商店】|shop]]
+[[【宿舍】|宿舍]]
+[[【图书馆】|图书馆]]
+[[【教学楼】|教学楼]]
+[[【药园】|药园]]
+[[【体育馆】|体育馆]]
+[[【活动中心】|活动中心]]
+[[【食堂】|食堂]]
+
+
+:: 食堂 {"position":"1150,125","size":"100,100"}
+这里是食堂
+[[回到马路|街道]]
 
 
 :: StoryScript [script]
@@ -229,6 +390,12 @@
         setTimeout(ChineseBtton, 200);
     });
 })();
+
+/侧边栏返回/
+predisplay["Menu Return"] = function (taskName) {
+if (! tags().includes("noreturn"))
+{State.variables.return = passage();}
+};
 
 :: StoryStylesheet [stylesheet]
 body {
